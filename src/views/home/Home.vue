@@ -4,13 +4,55 @@
 		<home-swiper :banners="banners"/>
 		<recommend-view :recommends="recommends"/>
 		<feature-view/>
+		<tab-control class="tab-control" :titles="['流行','新款','经典']"/>
+		<ul>
+			<li>1</li>
+			<li>1</li>
+			<li>1</li>
+			<li>1</li>
+			<li>1</li>
+			<li>1</li>
+			<li>1</li>
+			<li>1</li>
+			<li>1</li>
+			<li>1</li>
+			<li>1</li>
+			<li>1</li>
+			<li>1</li>
+			<li>1</li>
+			<li>1</li>
+			<li>1</li>
+			<li>1</li>
+			<li>1</li>
+			<li>1</li>
+			<li>1</li>
+			<li>1</li>
+			<li>1</li>
+			<li>1</li>
+			<li>1</li>
+			<li>1</li>
+			<li>1</li>
+			<li>1</li>
+			<li>1</li>
+			<li>1</li>
+			<li>1</li>
+			<li>1</li>
+			<li>1</li>
+			<li>1</li>
+			<li>1</li>
+			<li>1</li>
+			<li>1</li>
+		</ul>
     </div>
 </template>
 <script>
-    import NavBar from 'components/common/navbar/NavBar.vue'
 	import HomeSwiper from './childComps/HomeSwiper.vue'
 	import RecommendView from './childComps/RecommendView.vue'
 	import FeatureView from './childComps/FeatureView.vue'
+
+    import NavBar from 'components/common/navbar/NavBar.vue'
+	import TabControl from 'components/content/tabControl/TabControl.vue'
+
     import {getHomeMultidata} from  'network/home.js'
     export default {
         name:'Home',
@@ -18,7 +60,8 @@
             NavBar,
 			HomeSwiper,
 			RecommendView,
-			FeatureView
+			FeatureView,
+			TabControl
         },
         data(){
             return {
@@ -50,5 +93,9 @@
     }
 	#home{
 		padding-top: 44px;
+	}
+	.tab-control{
+		position: sticky;
+		top:44px;
 	}
 </style>
