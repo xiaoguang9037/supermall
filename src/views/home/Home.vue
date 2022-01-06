@@ -4,15 +4,8 @@
       <home-swiper :banners="banners"/>
       <recommend-view :recommends="recommends"/>
       <feature-view/>
-      <tab-control class="tab-control" :titles="['流行','新款','经典']" />
+      <tab-control class="tab-control" :titles="['流行','新款','经典']" @tabClick="tabClick" />
       <goods-list :goods="showGoods"/>
-    <ul><li>1</li><li>1</li><li>1</li><li>1</li><li>1</li><li>1</li><li>1</li><li>1</li><li>1</li><li>1</li>
-		<li>1</li><li>1</li><li>1</li><li>1</li><li>1</li><li>1</li><li>1</li><li>1</li><li>1</li><li>1</li>
-		<li>1</li><li>1</li><li>1</li><li>1</li><li>1</li><li>1</li><li>1</li><li>1</li><li>1</li><li>1</li>
-		<li>1</li><li>1</li><li>1</li><li>1</li><li>1</li><li>1</li><li>1</li><li>1</li><li>1</li><li>1</li>
-		<li>1</li><li>1</li><li>1</li><li>1</li><li>1</li><li>1</li><li>1</li><li>1</li><li>1</li><li>1</li>
-		<li>1</li><li>1</li><li>1</li><li>1</li><li>1</li><li>1</li><li>1</li><li>1</li><li>1</li><li>1</li>
-		</ul>
     </div>
 </template>
 <script>
@@ -85,7 +78,6 @@
           getHomeGoods(type){
             const page = this.goods[type].page + 1;
             getHomeGoods(type, page).then((res => {
-              console.log(res)
               // ...表示遍历,然后将元素以此放入原本的list中
               this.goods[type].list.push(...res.data.list);
               this.goods[type].page += 1;
@@ -114,5 +106,7 @@
   .tab-control{
     position: sticky;
     top:44px;
+    background-color: white;
+    z-index: 9;
   }
 </style>
