@@ -53,7 +53,7 @@
       }, 3000)
     },
     methods: {
-          /**
+      /**
        * 定时器操作
        */
       startTimer: function () {

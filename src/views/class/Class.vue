@@ -1,4 +1,5 @@
-<template><div class="wrpper">
+<template>
+   <scroll class="content">
 	<ul class="test"><li>分类列表1</li>
 	<li>分类列表2</li>
 	<li>分类列表3</li>
@@ -99,27 +100,20 @@
 	<li>分类列表98</li>
 	<li>分类列表99</li>
 	<li>分类列表100</li>
-	</ul></div>
+	</ul></scroll>
 </template>
 <script>
-import BScroll from 'better-scroll'
+import Scroll from 'components/common/scroll/Scroll.vue'
 	export default {
 		name:'Class',
-		data(){
-			return {
-				scroll:null
-			}
-		},
-		mounted(){
-			this.scroll = new BScroll(document.querySelector('.wrpper'), {
-
-			})
+		components:{
+			Scroll
 		}
 	}
 </script>
 <style scoped>
-.wrpper{
-	height: 150px;
+.content{
+	height: 200px;
 	overflow: hidden;
 }
 </style>

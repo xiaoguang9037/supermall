@@ -1,11 +1,14 @@
 <template>
     <div id='home'>
       <nav-bar class='home-nav'><div slot="center">购物街</div></nav-bar>
-      <home-swiper :banners="banners"/>
-      <recommend-view :recommends="recommends"/>
-      <feature-view/>
-      <tab-control class="tab-control" :titles="['流行','新款','经典']" @tabClick="tabClick" />
-      <goods-list :goods="showGoods"/>
+      <tab-control class="tab-control" :titles="['流行','新款','经典']" @tabClick="tabClick" ref='tabControl1' v-show='isTabControl1Show'/>
+      <scroll class="content" :pull-up-load="true" @pulllingUp='loadMore()' ref='scroll' @scroll="scrolChange">
+        <home-swiper :banners="banners" @swipwerFirst="swipwerFirst"/>
+        <recommend-view :recommends="recommends"/>
+        <feature-view/>
+        <tab-control :titles="['流行','新款','经典']" @tabClick="tabClick" ref='tabControl' />
+        <goods-list :goods="showGoods"/>
+      </scroll>
     </div>
 </template>
 <script>
@@ -16,6 +19,7 @@
   import NavBar from 'components/common/navbar/NavBar.vue'
   import TabControl from 'components/content/tabControl/TabControl.vue'
   import GoodsList from 'components/content/goods/GoodsList.vue'
+  import Scroll from 'components/common/scroll/Scroll.vue'
 
   import {getHomeMultidata, getHomeGoods} from  'network/home.js'
   
@@ -27,7 +31,8 @@
             RecommendView,
             FeatureView,
             TabControl,
-            GoodsList
+            GoodsList,
+            Scroll
         },
         data(){
             return {
@@ -38,7 +43,10 @@
                 'new':{page:0,list:[]},
                 'sell':{page:0,list:[]}
               },
-              currentType:'pop'
+              currentType:'pop',
+              currentType1:'pop',
+              tabControlOffSetTop:0,
+              isTabControl1Show:false,
             }
         },
         created(){
@@ -53,6 +61,16 @@
           /**
           * 事件监听相关的方法
           */
+          scrolChange(position){
+            if((-position.y) > this.tabControlOffSetTop) {
+              this.isTabControl1Show = true;
+            } else {
+              this.isTabControl1Show = false;
+            }
+          },
+          swipwerFirst(){
+            this.tabControlOffSetTop = this.$refs.tabControl.$el.offsetTop;
+          },
           tabClick(index) {
             switch (index) {
               case 0:
@@ -65,6 +83,12 @@
                 this.currentType = 'sell'
               break
             }
+            this.$refs.tabControl1.currentIndex = index;
+            this.$refs.tabControl.currentIndex = index;
+          },
+          // 加载更多数据
+          loadMore(){
+            this.getHomeGoods(this.currentType)
           },
           // 网络请求相关
           getHomeMultidata(){
@@ -77,36 +101,56 @@
           },
           getHomeGoods(type){
             const page = this.goods[type].page + 1;
+            // console.log(page);
+
             getHomeGoods(type, page).then((res => {
               // ...表示遍历,然后将元素以此放入原本的list中
               this.goods[type].list.push(...res.data.list);
               this.goods[type].page += 1;
+
+              this.$refs.scroll.scroll.finishPullUp();
             }))}
         },
 				computed:{
 					showGoods(){
 						return this.goods[this.currentType].list
 					}
-				}
+				},
+        activated(){
+          console.log('路由转移回来时调用');
+        },
+        deactivated(){
+          console.log('路由转移出去时调用');
+        }
     }
 </script>
 <style scoped>
-    .home-nav{
-        background-color: var(--color-tint);
-        color: white;
-    position: fixed;
+  .home-nav{
+    background-color: var(--color-tint);
+    color: white;
+    /* position: fixed;
     left: 0;
     right: 0;
-    top:0;
-    z-index: 9;
+    top:0;*/
+    margin-top: -44px;
+    z-index: 10; 
     }
   #home{
     padding-top: 44px;
+    height: 100vh;
+    position: relative;
   }
   .tab-control{
-    position: sticky;
-    top:44px;
+    position: relative;
     background-color: white;
     z-index: 9;
+  }
+  .content{
+    overflow: hidden;
+    position: absolute;
+    top:44px;
+    bottom: 49px;
+    right: 0;
+    left: 0;
   }
 </style>
