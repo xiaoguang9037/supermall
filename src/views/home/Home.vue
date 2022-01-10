@@ -117,10 +117,10 @@
 					}
 				},
         activated(){
-          console.log('路由转移回来时调用');
+          // console.log('路由转移回来时调用');
         },
         deactivated(){
-          console.log('路由转移出去时调用');
+          // console.log('路由转移出去时调用');
         }
     }
 </script>

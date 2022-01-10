@@ -1,5 +1,5 @@
 <template>
-  <div class="goods-item">
+  <div class="goods-item" @click="itemClick">
     <img :src="goodItem.show.img" alt="">
     <div class="goods-info">
       <p >{{goodItem.title}}</p>
@@ -20,6 +20,19 @@
                     return {}
                 }
             }
+        },
+        methods:{
+          itemClick(){
+            //跳转到详情页
+            // console.log('跳转到详情页');
+            this.$router.push('/detail/'+this.goodItem.iid);
+            // this.$router.push({
+            //   path:'/dateil',
+            //   query:{
+            //     id:'111'
+            //   }
+            // })
+          }
         }
     }
 </script>
