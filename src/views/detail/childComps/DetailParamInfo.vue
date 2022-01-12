@@ -24,7 +24,7 @@
     props: {
           paramInfo: {
             type: Object,
-        default() {
+            default() {
               return {}
         }
       }

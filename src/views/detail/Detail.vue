@@ -1,28 +1,29 @@
 <template>
     <div id="detail">
-        <detail-nav-bar class="detail-nav"/>
-        <scroll class="content" :pull-up-load="true">
+        <detail-nav-bar class="detail-nav" @itemClick="itemClick" ref="navBar"/>
+        <scroll class="content" :pull-up-load="true" ref="scroll" :probeType="3" @scroll="contentScroll">
             <detail-swiper :top-imgs="topImages"/>
             <detail-base-info :goods="goods"/>
             <detail-shop-info :shop="shop"/>
-            <detail-goods-info :detailInfo="detailInfo"/>
-            <detail-param-info :paramInfo="paramsInfo"/>
-            <detal-comment-info :commentInfo="commentInfo"/>
-            <goods-list :goods="recommends"/>
+            <detail-goods-info :detailInfo="detailInfo" @imgLoad="imgLoad"/>
+            <detail-param-info ref="params" :paramInfo="paramsInfo"/>
+            <detail-comment-info ref="comment" :commentInfo="commentInfo"/>
+            <goods-list ref="recommend" :goods="recommends"/>
         </scroll>
     </div>
 </template>
 
 <script>
 
-import {getDetail, Goods, Shop, GoodsParam, getRecommend} from 'network/detail.js'
+import {getDetail, Goods, Shop, GoodsParam, getRecommends} from 'network/detail.js'
+import {debounce} from 'common/utils.js'
 import DetailSwiper from './childComps/DetailSwiper.vue'
 import DetailBaseInfo from './childComps/DetailBaseInfo.vue'
 import DetailShopInfo from './childComps/DetailShopInfo.vue'
 import Scroll from '../../components/common/scroll/Scroll.vue'
 import DetailGoodsInfo from './childComps/DetailGoodsInfo.vue'
 import DetailParamInfo from './childComps/DetailParamInfo.vue'
-import DetalCommentInfo from './childComps/DetalCommentInfo.vue'
+import DetailCommentInfo from './childComps/DetailCommentInfo.vue'
 import DetailNavBar from './childComps/DetailNavBar.vue'
 import GoodsList from 'components/content/goods/GoodsList.vue'
 
@@ -38,6 +39,9 @@ export default {
             paramsInfo:{},
             commentInfo:{},
             recommends:[],
+            themeTopYs:[],
+            getThemeTopY:null,
+            currentIndex:0
         }
     },
     components:{
@@ -48,7 +52,7 @@ export default {
         Scroll ,
         DetailGoodsInfo,
         DetailParamInfo,
-        DetalCommentInfo,
+        DetailCommentInfo,
         GoodsList,
     },
     created(){
@@ -80,12 +84,61 @@ export default {
             if(data.rate.cRate !== 0){
                 this.commentInfo = data.rate.list[0]; 
             }
+            //渲染完调用，但是不包括图片高度
+            this.$nextTick(() => {
+                // this.themeTopYs=[];
+                // this.themeTopYs.push(0);
+                // this.themeTopYs.push(this.$refs.params.$el.setoffTop);
+                // this.themeTopYs.push(this.$refs.comment.$el.setoffTop);
+                // this.themeTopYs.push(this.$refs.recommend.$el.setoffTop);
+            });
         });
         
         //请求推荐数据
-        getRecommend().then(res => {
+        getRecommends().then(res => {
             this.recommends = res.data.list;
         });
+
+        this.getThemeTopY = debounce(()=>{
+            this.themeTopYs=[];
+            this.themeTopYs.push(0);
+            this.themeTopYs.push(this.$refs.params.$el.offsetTop-44);
+            this.themeTopYs.push(this.$refs.comment.$el.offsetTop-44);
+            this.themeTopYs.push(this.$refs.recommend.$el.offsetTop-44);
+            // console.log(this.themeTopYs);
+            },300)
+    },
+    methods:{
+        itemClick(index){
+            this.$refs.scroll.scroll.scrollTo(0, -this.themeTopYs[index], 300)
+            // console.log(index)
+        },
+        imgLoad(){
+            this.getThemeTopY();
+        },
+        contentScroll(opsition){
+            const opsitonY = -opsition.y;
+            for(let i=0; i < this.themeTopYs.length; i++){
+                // var nextI = parseInt(i) +1;
+                if(this.currentIndex == i) continue;
+                if(i < this.themeTopYs.length -1 ){
+                    // console.log(this.themeTopYs[i] +'_'+opsitonY+'_'+this.themeTopYs[i+1])
+                    if(opsitonY>this.themeTopYs[i] && opsitonY<this.themeTopYs[i+1]) {
+                        this.currentIndex = (i);
+                        this.$refs.navBar.currentIndex = i;
+                        break;
+                        //console.log(i);
+                    }
+                } else {
+                    if(opsitonY > this.themeTopYs[i]){
+                        this.currentIndex = (i);
+                        this.$refs.navBar.currentIndex = i;
+                        // console.log(i);
+                        break;
+                    }
+                }
+            }
+        }
     }
 }
 </script>

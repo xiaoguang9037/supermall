@@ -22,11 +22,15 @@ export default {
         pullUpLoad:{
             type: Boolean,
             default:false
+        },
+        probeType:{
+            type:Number,
+            default:2
         }
     },
     mounted(){
         this.scroll = new BScroll(this.$refs.warpper, {
-            probeType:2,
+            probeType:this.probeType,
             pullUpLoad:this.pullUpLoad,
             click:true,
             observeImage:true
