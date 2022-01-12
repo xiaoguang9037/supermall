@@ -7,20 +7,24 @@
             <detail-shop-info :shop="shop"/>
             <detail-goods-info :detailInfo="detailInfo"/>
             <detail-param-info :paramInfo="paramsInfo"/>
+            <detal-comment-info :commentInfo="commentInfo"/>
+            <goods-list :goods="recommends"/>
         </scroll>
     </div>
 </template>
 
 <script>
-import DetailNavBar from './childComps/DetailNavBar.vue'
 
-import {getDetail, Goods, Shop, GoodsParam} from 'network/detail.js'
+import {getDetail, Goods, Shop, GoodsParam, getRecommend} from 'network/detail.js'
 import DetailSwiper from './childComps/DetailSwiper.vue'
 import DetailBaseInfo from './childComps/DetailBaseInfo.vue'
 import DetailShopInfo from './childComps/DetailShopInfo.vue'
 import Scroll from '../../components/common/scroll/Scroll.vue'
 import DetailGoodsInfo from './childComps/DetailGoodsInfo.vue'
 import DetailParamInfo from './childComps/DetailParamInfo.vue'
+import DetalCommentInfo from './childComps/DetalCommentInfo.vue'
+import DetailNavBar from './childComps/DetailNavBar.vue'
+import GoodsList from 'components/content/goods/GoodsList.vue'
 
 export default {
     name:"Detail",
@@ -32,6 +36,8 @@ export default {
             shop:{},
             detailInfo:{},
             paramsInfo:{},
+            commentInfo:{},
+            recommends:[],
         }
     },
     components:{
@@ -41,16 +47,19 @@ export default {
         DetailShopInfo,
         Scroll ,
         DetailGoodsInfo,
-        DetailParamInfo
+        DetailParamInfo,
+        DetalCommentInfo,
+        GoodsList,
     },
     created(){
         //取得iid
         this.iid = this.$route.params.iid;
 
-        //数据请求
+        //数据请求数据
         getDetail(this.iid).then(res => {
-        // console.log(res);
-        const data = res.result;
+            // console.log(res);
+            const data = res.result;
+
             // 获取轮播图数据
             this.topImages = res.result.itemInfo.topImages;
             // console.log(res.result.itemInfo.topImages.length);
@@ -66,8 +75,16 @@ export default {
 
             //获取参数数据
             this.paramsInfo = new GoodsParam(data.itemParams.info, data.itemParams.rule);
-            console.log(this.goods);
 
+            // 获取评论数据
+            if(data.rate.cRate !== 0){
+                this.commentInfo = data.rate.list[0]; 
+            }
+        });
+        
+        //请求推荐数据
+        getRecommend().then(res => {
+            this.recommends = res.data.list;
         });
     }
 }
