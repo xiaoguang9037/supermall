@@ -10,6 +10,7 @@
             <detail-comment-info ref="comment" :commentInfo="commentInfo"/>
             <goods-list ref="recommend" :goods="recommends"/>
         </scroll>
+        <detail-bottom-bar/>
     </div>
 </template>
 
@@ -26,6 +27,7 @@ import DetailParamInfo from './childComps/DetailParamInfo.vue'
 import DetailCommentInfo from './childComps/DetailCommentInfo.vue'
 import DetailNavBar from './childComps/DetailNavBar.vue'
 import GoodsList from 'components/content/goods/GoodsList.vue'
+import DetailBottomBar from './childComps/DetailBottomBar.vue'
 
 export default {
     name:"Detail",
@@ -54,6 +56,7 @@ export default {
         DetailParamInfo,
         DetailCommentInfo,
         GoodsList,
+        DetailBottomBar,
     },
     created(){
         //取得iid
